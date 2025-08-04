@@ -1,6 +1,6 @@
 [project]
 name = "cache-middleware"
-version = "0.1.1"
+version = "0.1.2"
 description = "Cache capabilities middleware for Starlette/Fastapi"
 authors = [
     {name = "Linus", email = "impalah@gmail.com"}
