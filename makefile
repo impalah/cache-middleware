@@ -96,7 +96,7 @@ test:
 
 # Documentation commands
 docs:
-	uv run sphinx-build -b html docs_source docs
+	uv run sphinx-build docs_source docs
 
 docs-clean:
 	rm -rf docs && \
