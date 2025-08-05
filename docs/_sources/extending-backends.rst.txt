@@ -586,14 +586,14 @@ Combine multiple backends for a hierarchical cache:
 
    class MultiTierBackend(CacheBackend):
        """
-       Multi-tier cache backend with L1 (memory) and L2 (Redis) cache.
+       Multi-tier cache backend with L1 (memory) and L2 (Redis/ValKey) cache.
        
        Parameters
        ----------
        l1_backend : CacheBackend
            Fast L1 cache (typically memory-based)
        l2_backend : CacheBackend
-           Slower but larger L2 cache (typically Redis)
+           Slower but larger L2 cache (typically Redis/ValKey)
        l1_timeout_ratio : float
            Ratio of L1 to L2 timeout (default: 0.5)
        """
@@ -646,7 +646,7 @@ Combine multiple backends for a hierarchical cache:
    # Usage example
    def create_multi_tier_backend():
        l1_cache = MemoryBackend(max_size=1000)  # Fast but limited
-       l2_cache = RedisBackend(url="redis://localhost:6379")  # Slower but scalable
+       l2_cache = RedisBackend(url="redis://localhost:6379")  # Slower but scalable (or use 6380 for ValKey)
        return MultiTierBackend(l1_cache, l2_cache)
 
 Testing Custom Backends

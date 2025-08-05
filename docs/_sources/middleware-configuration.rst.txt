@@ -39,17 +39,17 @@ All cache backends implement the ``CacheBackend`` interface:
            """Close backend connections."""
            pass
 
-Redis Backend Options
-~~~~~~~~~~~~~~~~~~~~~
+Redis/ValKey Backend Options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``RedisBackend`` supports extensive configuration:
+The ``RedisBackend`` supports extensive configuration and works with both Redis and ValKey:
 
 .. code-block:: python
 
-   from cache_middleware.backends.redis_backend import RedisBackend
+   from cache_middleware import RedisBackend
 
    redis_backend = RedisBackend(
-       url="redis://localhost:6379",           # Redis connection URL
+       url="redis://localhost:6379",           # Redis/ValKey connection URL (use 6380 for ValKey)
        max_connections=10,                     # Max connections in pool
        retry_on_timeout=True,                  # Retry on timeout
        socket_keepalive=True,                  # Enable TCP keepalive
@@ -59,8 +59,8 @@ The ``RedisBackend`` supports extensive configuration:
            3: 5,  # TCP_KEEPCNT
        },
        health_check_interval=30,               # Health check interval (seconds)
-       password=None,                          # Redis password
-       db=0,                                   # Redis database number
+       password=None,                          # Redis/ValKey password
+       db=0,                                   # Database number
        encoding='utf-8',                       # String encoding
        decode_responses=True,                  # Auto-decode responses
        socket_timeout=5.0,                     # Socket timeout
@@ -82,22 +82,25 @@ The ``RedisBackend`` supports extensive configuration:
    # Basic Redis
    "redis://localhost:6379"
    
-   # Redis with password
+   # Basic ValKey
+   "redis://localhost:6380"
+   
+   # Redis/ValKey with password
    "redis://:password@localhost:6379"
    
-   # Redis with username and password
+   # Redis/ValKey with username and password
    "redis://username:password@localhost:6379"
    
-   # Redis with specific database
+   # Redis/ValKey with specific database
    "redis://localhost:6379/1"
    
-   # Redis with SSL
+   # Redis/ValKey with SSL
    "rediss://localhost:6380"
    
-   # Redis Sentinel
+   # Redis Sentinel (works with ValKey too)
    "redis+sentinel://sentinel-host:26379/mymaster"
 
-**Production Redis Configuration:**
+**Production Redis/ValKey Configuration:**
 
 .. code-block:: python
 
@@ -122,7 +125,7 @@ The ``MemoryBackend`` has simpler configuration:
 
 .. code-block:: python
 
-   from cache_middleware.backends.memory_backend import MemoryBackend
+   from cache_middleware import MemoryBackend
 
    memory_backend = MemoryBackend(
        max_size=1000,          # Maximum number of cached items
@@ -144,7 +147,7 @@ For implementing custom backends:
 
 .. code-block:: python
 
-   from cache_middleware.backends.base import CacheBackend
+   from cache_middleware import CacheBackend
 
    class CustomBackend(CacheBackend):
        def __init__(self, custom_param: str, timeout: int = 300):
@@ -180,7 +183,7 @@ The ``@cache`` decorator accepts several parameters:
 
 .. code-block:: python
 
-   from cache_middleware.decorators import cache
+   from cache_middleware import cache
 
    @cache(
        timeout=300,            # Cache timeout in seconds
@@ -249,8 +252,7 @@ Register the middleware with your FastAPI application:
 .. code-block:: python
 
    from fastapi import FastAPI
-   from cache_middleware.middleware import CacheMiddleware
-   from cache_middleware.backends.redis_backend import RedisBackend
+   from cache_middleware import CacheMiddleware, RedisBackend
 
    app = FastAPI()
 

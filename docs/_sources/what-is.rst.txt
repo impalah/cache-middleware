@@ -28,7 +28,7 @@ The caching behavior is controlled through a simple decorator pattern:
 
 .. code-block:: python
 
-   from cache_middleware.decorators import cache
+   from cache_middleware import cache
 
    @app.get("/expensive-operation")
    @cache(timeout=300)  # Cache for 5 minutes
@@ -47,7 +47,7 @@ Backend Architecture
 
 Cache Middleware uses a pluggable backend system:
 
-- **Redis Backend**: For distributed, persistent caching in production
+- **Redis/ValKey Backend**: For distributed, persistent caching in production
 - **Memory Backend**: For development, testing, and single-instance deployments
 - **Custom Backends**: Implement your own storage solutions (Memcached, database, etc.)
 
@@ -60,7 +60,7 @@ All backends implement the same interface, making it easy to switch between them
    app.add_middleware(CacheMiddleware, backend=memory_backend)
 
    # Production setup  
-   redis_backend = RedisBackend(url="redis://prod-redis:6379")
+   redis_backend = RedisBackend(url="redis://prod-redis:6379")  # Or use ValKey
    app.add_middleware(CacheMiddleware, backend=redis_backend)
 
 How It Works
@@ -133,7 +133,7 @@ Scalability
 
 - **Higher Throughput**: Handle more requests with the same resources
 - **Backend Protection**: Reduce load on databases and external services
-- **Horizontal Scaling**: Redis backend supports distributed caching
+- **Horizontal Scaling**: Redis/ValKey backend supports distributed caching
 
 Flexibility
 ~~~~~~~~~~~

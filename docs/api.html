@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Reference &mdash; Cache Middleware 0.1.1 documentation</title>
+  <title>API Reference &mdash; Cache Middleware 0.1.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,7 +14,7 @@
     <link rel="canonical" href="/cache-middleware/api.html" />
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/documentation_options.js?v=6e0256f3"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -60,7 +60,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#backend-implementations">Backend Implementations</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-cache_middleware.backends.redis_backend">Redis Backend</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#redis-valkey-backend">Redis/ValKey Backend</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#cache_middleware.backends.redis_backend.RedisBackend"><code class="docutils literal notranslate"><span class="pre">RedisBackend</span></code></a></li>
 </ul>
 </li>
@@ -297,9 +297,9 @@ which endpoints should be cached and for how long.</p>
 </section>
 <section id="backend-implementations">
 <h2>Backend Implementations<a class="headerlink" href="#backend-implementations" title="Link to this heading"></a></h2>
-<section id="module-cache_middleware.backends.redis_backend">
-<span id="redis-backend"></span><h3>Redis Backend<a class="headerlink" href="#module-cache_middleware.backends.redis_backend" title="Link to this heading"></a></h3>
-<p>Redis cache backend implementation.</p>
+<section id="redis-valkey-backend">
+<h3>Redis/ValKey Backend<a class="headerlink" href="#redis-valkey-backend" title="Link to this heading"></a></h3>
+<p id="module-cache_middleware.backends.redis_backend">Redis cache backend implementation.</p>
 <p>This module provides a Redis-based cache backend for production use.
 It supports connection pooling, automatic reconnection, and comprehensive
 error handling.</p>
@@ -437,6 +437,8 @@ to properly close the Redis connection pool.</p>
 
 </dd></dl>
 
+<p>The Redis backend is fully compatible with both Redis and ValKey databases.
+ValKey is a high-performance data structure server that provides 100% compatibility with Redis APIs.</p>
 </section>
 <section id="module-cache_middleware.backends.memory_backend">
 <span id="memory-backend"></span><h3>Memory Backend<a class="headerlink" href="#module-cache_middleware.backends.memory_backend" title="Link to this heading"></a></h3>
@@ -769,7 +771,7 @@ and output destinations.</p>
 <h3>Backend Classes<a class="headerlink" href="#backend-classes" title="Link to this heading"></a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>CacheBackend (ABC)
 ├── MemoryBackend
-├── RedisBackend
+├── RedisBackend (compatible with Redis and ValKey)
 └── Custom backends (user-defined)
 </pre></div>
 </div>
@@ -799,14 +801,11 @@ and output destinations.</p>
 <section id="basic-api-usage">
 <h3>Basic API Usage<a class="headerlink" href="#basic-api-usage" title="Link to this heading"></a></h3>
 <p>Creating and configuring backends:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.redis_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.memory_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBackend</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheMiddleware</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span><span class="p">,</span> <span class="n">MemoryBackend</span><span class="p">,</span> <span class="n">CacheMiddleware</span><span class="p">,</span> <span class="n">cache</span>
 
-<span class="c1"># Create Redis backend</span>
+<span class="c1"># Create Redis/ValKey backend</span>
 <span class="n">redis_backend</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span>
-    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>
+    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>  <span class="c1"># Or use port 6380 for ValKey</span>
     <span class="n">max_connections</span><span class="o">=</span><span class="mi">10</span>
 <span class="p">)</span>
 

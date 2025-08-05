@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Cache Middleware 0.1.1 documentation</title>
+  <title>Installation &mdash; Cache Middleware 0.1.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,7 +14,7 @@
     <link rel="canonical" href="/cache-middleware/installation.html" />
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/documentation_options.js?v=6e0256f3"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -56,7 +56,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#backend-dependencies">Backend Dependencies</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#redis-backend">Redis Backend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#redis-valkey-backend">Redis/ValKey Backend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#memcached-backend">Memcached Backend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#memory-backend">Memory Backend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#all-backends">All Backends</a></li>
@@ -73,7 +73,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#environment-setup">Environment Setup</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#memory-backend-setup">Memory Backend Setup</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#redis-setup">Redis Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#redis-valkey-setup">Redis/ValKey Setup</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#memcached-setup">Memcached Setup</a></li>
 </ul>
 </li>
@@ -128,7 +128,7 @@
 <ul class="simple">
 <li><p><strong>Python</strong>: 3.12 or higher</p></li>
 <li><p><strong>FastAPI</strong>: 0.116.1 or higher</p></li>
-<li><p><strong>Redis</strong>: Optional, required only for Redis backend</p></li>
+<li><p><strong>Redis/ValKey</strong>: Optional, required only for Redis/ValKey backend</p></li>
 <li><p><strong>Memcached</strong>: Optional, required only for Memcached backend</p></li>
 </ul>
 </section>
@@ -149,7 +149,7 @@
 <section id="backend-specific-installation">
 <h3>Backend-Specific Installation<a class="headerlink" href="#backend-specific-installation" title="Link to this heading"></a></h3>
 <p>Install with specific backend support:</p>
-<p><strong>Redis Backend:</strong></p>
+<p><strong>Redis/ValKey Backend:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cache-middleware<span class="o">[</span>redis<span class="o">]</span>
 </pre></div>
 </div>
@@ -241,18 +241,29 @@ pip<span class="w"> </span>install<span class="w"> </span>aiomcache<span class="
 <section id="backend-dependencies">
 <h2>Backend Dependencies<a class="headerlink" href="#backend-dependencies" title="Link to this heading"></a></h2>
 <p>The package now supports modular installation of backend dependencies:</p>
-<section id="redis-backend">
-<h3>Redis Backend<a class="headerlink" href="#redis-backend" title="Link to this heading"></a></h3>
-<p>The Redis backend requires additional dependencies installed via extras:</p>
+<section id="redis-valkey-backend">
+<h3>Redis/ValKey Backend<a class="headerlink" href="#redis-valkey-backend" title="Link to this heading"></a></h3>
+<p>The Redis/ValKey backend requires additional dependencies installed via extras:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cache-middleware<span class="o">[</span>redis<span class="o">]</span>
 </pre></div>
 </div>
 <p>This includes:
 - <code class="docutils literal notranslate"><span class="pre">redis[hiredis]&gt;=6.2.0</span></code> - Redis client with hiredis for performance
-- Hiredis provides faster Redis protocol parsing</p>
+- Hiredis provides faster Redis protocol parsing
+- <strong>Compatible with both Redis and ValKey servers</strong></p>
 <p><strong>Manual Installation:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cache-middleware
 pip<span class="w"> </span>install<span class="w"> </span>redis<span class="o">[</span>hiredis<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Connection Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
+
+<span class="c1"># Connect to Redis</span>
+<span class="n">redis_backend</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">)</span>
+
+<span class="c1"># Connect to ValKey (same API)</span>
+<span class="n">valkey_backend</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6380&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -328,10 +339,10 @@ uv<span class="w"> </span>sync
 <span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;uvicorn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;main:app&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--host&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--port&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;8000&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p><strong>With Redis Backend:</strong></p>
+<p><strong>With Redis/ValKey Backend:</strong></p>
 <div class="highlight-dockerfile notranslate"><div class="highlight"><pre><span></span><span class="k">FROM</span><span class="w"> </span><span class="s">python:3.12-slim</span>
 
-<span class="c"># Install cache-middleware with Redis support</span>
+<span class="c"># Install cache-middleware with Redis/ValKey support</span>
 <span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cache-middleware<span class="o">[</span>redis<span class="o">]</span>
 
 <span class="c"># Copy your application</span>
@@ -358,7 +369,7 @@ uv<span class="w"> </span>sync
 </div>
 <section id="docker-compose-example">
 <h3>Docker Compose Example<a class="headerlink" href="#docker-compose-example" title="Link to this heading"></a></h3>
-<p>Complete setup with Redis backend:</p>
+<p>Complete setup with Redis/ValKey backends:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.8&#39;</span>
 <span class="nt">services</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">web</span><span class="p">:</span>
@@ -367,13 +378,20 @@ uv<span class="w"> </span>sync
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8000:8000&quot;</span>
 <span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REDIS_URL=redis://redis:6379</span>
+<span class="w">      </span><span class="c1"># or use ValKey: REDIS_URL=redis://valkey:6379</span>
 <span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">valkey</span>
 
 <span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:7-alpine</span>
 <span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;6379:6379&quot;</span>
+
+<span class="w">  </span><span class="nt">valkey</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">valkey/valkey:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;6380:6379&quot;</span>
 </pre></div>
 </div>
 <p>For multi-backend development environment:</p>
@@ -415,11 +433,15 @@ uv<span class="w"> </span>sync
 <h3>Memory Backend Setup<a class="headerlink" href="#memory-backend-setup" title="Link to this heading"></a></h3>
 <p>No external setup required. The memory backend works out of the box.</p>
 </section>
-<section id="redis-setup">
-<h3>Redis Setup<a class="headerlink" href="#redis-setup" title="Link to this heading"></a></h3>
-<p>If using the Redis backend, you’ll need a Redis server. Here are common setup methods:</p>
+<section id="redis-valkey-setup">
+<h3>Redis/ValKey Setup<a class="headerlink" href="#redis-valkey-setup" title="Link to this heading"></a></h3>
+<p>If using the Redis/ValKey backend, you’ll need a Redis or ValKey server. Here are common setup methods:</p>
 <p><strong>Local Redis with Docker:</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis<span class="w"> </span>-p<span class="w"> </span><span class="m">6379</span>:6379<span class="w"> </span>redis:7-alpine
+</pre></div>
+</div>
+<p><strong>Local ValKey with Docker:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>valkey<span class="w"> </span>-p<span class="w"> </span><span class="m">6380</span>:6379<span class="w"> </span>valkey/valkey:latest
 </pre></div>
 </div>
 <p><strong>Docker Compose (for development):</strong></p>
@@ -431,8 +453,16 @@ uv<span class="w"> </span>sync
 <span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis-data:/data</span>
 
+<span class="w">  </span><span class="nt">valkey</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">valkey/valkey:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;6380:6379&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">valkey-data:/data</span>
+
 <span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">redis-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">valkey-data</span><span class="p">:</span>
 </pre></div>
 </div>
 <p><strong>System Installation:</strong></p>
@@ -484,14 +514,14 @@ Download from the official Memcached website or use Docker.</p>
 <section id="backend-specific-verification">
 <h3>Backend-Specific Verification<a class="headerlink" href="#backend-specific-verification" title="Link to this heading"></a></h3>
 <p><strong>Memory Backend (always available):</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.memory_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBackend</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBackend</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">MemoryBackend</span><span class="p">(</span><span class="n">max_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Memory backend available&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Redis Backend:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.redis_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Redis backend available&quot;</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Redis backend not available: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -499,7 +529,7 @@ Download from the official Memcached website or use Docker.</p>
 </div>
 <p><strong>Memcached Backend:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.memcached_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemcachedBackend</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemcachedBackend</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Memcached backend available&quot;</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Memcached backend not available: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -510,9 +540,7 @@ Download from the official Memcached website or use Docker.</p>
 <h3>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading"></a></h3>
 <p>Test with a simple FastAPI app:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheMiddleware</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.memory_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBackend</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheMiddleware</span><span class="p">,</span> <span class="n">MemoryBackend</span><span class="p">,</span> <span class="n">cache</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 

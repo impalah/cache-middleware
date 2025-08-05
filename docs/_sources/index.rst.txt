@@ -19,7 +19,7 @@ Cache Middleware provides transparent response caching with pluggable backends, 
 Features
 --------
 
-* **Multiple Backends**: Redis, in-memory, and custom backend support
+* **Multiple Backends**: Redis/ValKey, in-memory, and custom backend support
 * **Decorator-based**: Simple ``@cache(timeout=300)`` decorator for endpoint caching
 * **Cache-Control Support**: Respects HTTP Cache-Control headers
 * **Flexible Configuration**: Environment-based or explicit configuration
@@ -40,14 +40,12 @@ Add caching to your FastAPI application:
 .. code-block:: python
 
    from fastapi import FastAPI
-   from cache_middleware.middleware import CacheMiddleware
-   from cache_middleware.backends.redis_backend import RedisBackend
-   from cache_middleware.decorators import cache
+   from cache_middleware import CacheMiddleware, RedisBackend, cache
 
    app = FastAPI()
 
-   # Configure Redis backend
-   redis_backend = RedisBackend(url="redis://localhost:6379")
+   # Configure Redis/ValKey backend
+   redis_backend = RedisBackend(url="redis://localhost:6379")  # Use 6380 for ValKey
    app.add_middleware(CacheMiddleware, backend=redis_backend)
 
    @app.get("/items")

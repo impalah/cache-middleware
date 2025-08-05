@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Extending Backends &mdash; Cache Middleware 0.1.1 documentation</title>
+  <title>Extending Backends &mdash; Cache Middleware 0.1.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,7 +14,7 @@
     <link rel="canonical" href="/cache-middleware/extending-backends.html" />
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/documentation_options.js?v=6e0256f3"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -682,14 +682,14 @@
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MultiTierBackend</span><span class="p">(</span><span class="n">CacheBackend</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Multi-tier cache backend with L1 (memory) and L2 (Redis) cache.</span>
+<span class="sd">    Multi-tier cache backend with L1 (memory) and L2 (Redis/ValKey) cache.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    l1_backend : CacheBackend</span>
 <span class="sd">        Fast L1 cache (typically memory-based)</span>
 <span class="sd">    l2_backend : CacheBackend</span>
-<span class="sd">        Slower but larger L2 cache (typically Redis)</span>
+<span class="sd">        Slower but larger L2 cache (typically Redis/ValKey)</span>
 <span class="sd">    l1_timeout_ratio : float</span>
 <span class="sd">        Ratio of L1 to L2 timeout (default: 0.5)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -742,7 +742,7 @@
 <span class="c1"># Usage example</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_multi_tier_backend</span><span class="p">():</span>
     <span class="n">l1_cache</span> <span class="o">=</span> <span class="n">MemoryBackend</span><span class="p">(</span><span class="n">max_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Fast but limited</span>
-    <span class="n">l2_cache</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">)</span>  <span class="c1"># Slower but scalable</span>
+    <span class="n">l2_cache</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">)</span>  <span class="c1"># Slower but scalable (or use 6380 for ValKey)</span>
     <span class="k">return</span> <span class="n">MultiTierBackend</span><span class="p">(</span><span class="n">l1_cache</span><span class="p">,</span> <span class="n">l2_cache</span><span class="p">)</span>
 </pre></div>
 </div>

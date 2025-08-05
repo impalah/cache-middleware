@@ -8,7 +8,7 @@ Requirements
 
 - **Python**: 3.12 or higher
 - **FastAPI**: 0.116.1 or higher
-- **Redis**: Optional, required only for Redis backend
+- **Redis/ValKey**: Optional, required only for Redis/ValKey backend
 - **Memcached**: Optional, required only for Memcached backend
 
 Basic Installation
@@ -35,7 +35,7 @@ Backend-Specific Installation
 
 Install with specific backend support:
 
-**Redis Backend:**
+**Redis/ValKey Backend:**
 
 .. code-block:: bash
 
@@ -153,10 +153,10 @@ Backend Dependencies
 
 The package now supports modular installation of backend dependencies:
 
-Redis Backend
-~~~~~~~~~~~~~
+Redis/ValKey Backend
+~~~~~~~~~~~~~~~~~~~
 
-The Redis backend requires additional dependencies installed via extras:
+The Redis/ValKey backend requires additional dependencies installed via extras:
 
 .. code-block:: bash
 
@@ -165,6 +165,7 @@ The Redis backend requires additional dependencies installed via extras:
 This includes:
 - ``redis[hiredis]>=6.2.0`` - Redis client with hiredis for performance
 - Hiredis provides faster Redis protocol parsing
+- **Compatible with both Redis and ValKey servers**
 
 **Manual Installation:**
 
@@ -172,6 +173,18 @@ This includes:
 
    pip install cache-middleware
    pip install redis[hiredis]
+
+**Connection Examples:**
+
+.. code-block:: python
+
+   from cache_middleware import RedisBackend
+   
+   # Connect to Redis
+   redis_backend = RedisBackend(url="redis://localhost:6379")
+   
+   # Connect to ValKey (same API)
+   valkey_backend = RedisBackend(url="redis://localhost:6380")
 
 Memcached Backend  
 ~~~~~~~~~~~~~~~~~
@@ -261,13 +274,13 @@ For containerized environments, choose the appropriate backend extras:
    # Run your FastAPI app
    CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
-**With Redis Backend:**
+**With Redis/ValKey Backend:**
 
 .. code-block:: dockerfile
 
    FROM python:3.12-slim
 
-   # Install cache-middleware with Redis support
+   # Install cache-middleware with Redis/ValKey support
    RUN pip install cache-middleware[redis]
 
    # Copy your application
@@ -296,7 +309,7 @@ For containerized environments, choose the appropriate backend extras:
 Docker Compose Example
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Complete setup with Redis backend:
+Complete setup with Redis/ValKey backends:
 
 .. code-block:: yaml
 
@@ -308,13 +321,20 @@ Complete setup with Redis backend:
          - "8000:8000"
        environment:
          - REDIS_URL=redis://redis:6379
+         # or use ValKey: REDIS_URL=redis://valkey:6379
        depends_on:
          - redis
+         - valkey
      
      redis:
        image: redis:7-alpine
        ports:
          - "6379:6379"
+         
+     valkey:
+       image: valkey/valkey:latest
+       ports:
+         - "6380:6379"
 
 For multi-backend development environment:
 
@@ -358,16 +378,22 @@ Memory Backend Setup
 
 No external setup required. The memory backend works out of the box.
 
-Redis Setup
-~~~~~~~~~~~
+Redis/ValKey Setup
+~~~~~~~~~~~~~~~~~~
 
-If using the Redis backend, you'll need a Redis server. Here are common setup methods:
+If using the Redis/ValKey backend, you'll need a Redis or ValKey server. Here are common setup methods:
 
 **Local Redis with Docker:**
 
 .. code-block:: bash
 
    docker run -d --name redis -p 6379:6379 redis:7-alpine
+
+**Local ValKey with Docker:**
+
+.. code-block:: bash
+
+   docker run -d --name valkey -p 6380:6379 valkey/valkey:latest
 
 **Docker Compose (for development):**
 
@@ -380,9 +406,17 @@ If using the Redis backend, you'll need a Redis server. Here are common setup me
          - "6379:6379"
        volumes:
          - redis-data:/data
+         
+     valkey:
+       image: valkey/valkey:latest
+       ports:
+         - "6380:6379"
+       volumes:
+         - valkey-data:/data
    
    volumes:
      redis-data:
+     valkey-data:
 
 **System Installation:**
 
@@ -454,7 +488,7 @@ Backend-Specific Verification
 
 .. code-block:: python
 
-   from cache_middleware.backends.memory_backend import MemoryBackend
+   from cache_middleware import MemoryBackend
    backend = MemoryBackend(max_size=100)
    print("Memory backend available")
 
@@ -463,7 +497,7 @@ Backend-Specific Verification
 .. code-block:: python
 
    try:
-       from cache_middleware.backends.redis_backend import RedisBackend
+       from cache_middleware import RedisBackend
        print("Redis backend available")
    except ImportError as e:
        print(f"Redis backend not available: {e}")
@@ -473,7 +507,7 @@ Backend-Specific Verification
 .. code-block:: python
 
    try:
-       from cache_middleware.backends.memcached_backend import MemcachedBackend
+       from cache_middleware import MemcachedBackend
        print("Memcached backend available")
    except ImportError as e:
        print(f"Memcached backend not available: {e}")
@@ -486,9 +520,7 @@ Test with a simple FastAPI app:
 .. code-block:: python
 
    from fastapi import FastAPI
-   from cache_middleware.middleware import CacheMiddleware
-   from cache_middleware.backends.memory_backend import MemoryBackend
-   from cache_middleware.decorators import cache
+   from cache_middleware import CacheMiddleware, MemoryBackend, cache
 
    app = FastAPI()
 

@@ -1,7 +1,13 @@
 User Guide
 ==========
 
-This guide provides comprehensive examples of using Cache Middleware with FastAPI, covering different backends, configurations, and deployment scenarios.
+This guide provide.. code-block:: python
+
+   from cache_middleware import RedisBackend
+
+   # Basic Redis configuration
+   redis_backend = RedisBackend(url="redis://localhost:6379")
+   app.add_middleware(CacheMiddleware, backend=redis_backend)ehensive examples of using Cache Middleware with FastAPI, covering different backends, configurations, and deployment scenarios.
 
 Basic Usage
 -----------
@@ -14,9 +20,7 @@ Here's a minimal example to get started:
 .. code-block:: python
 
    from fastapi import FastAPI
-   from cache_middleware.middleware import CacheMiddleware
-   from cache_middleware.backends.memory_backend import MemoryBackend
-   from cache_middleware.decorators import cache
+   from cache_middleware import CacheMiddleware, MemoryBackend, cache
 
    app = FastAPI()
 
@@ -96,7 +100,7 @@ Perfect for development and testing:
 
 .. code-block:: python
 
-   from cache_middleware.backends.memory_backend import MemoryBackend
+   from cache_middleware import MemoryBackend
 
    # Basic memory backend
    memory_backend = MemoryBackend(max_size=1000)
@@ -112,7 +116,7 @@ Use helper functions for environment-based setup:
 
 .. code-block:: python
 
-   from cache_middleware.helpers import auto_configure_backend
+   from cache_middleware import auto_configure_backend
    import os
 
    # Automatically configure based on environment variables
@@ -303,7 +307,7 @@ Multi-Environment Setup
 .. code-block:: python
 
    import os
-   from cache_middleware.helpers import get_backend_for_environment
+   from cache_middleware import get_backend_for_environment
 
    app = FastAPI()
 
@@ -388,8 +392,7 @@ Benchmark different backends:
 
    import time
    import asyncio
-   from cache_middleware.backends.memory_backend import MemoryBackend
-   from cache_middleware.backends.redis_backend import RedisBackend
+   from cache_middleware import MemoryBackend, RedisBackend
 
    async def benchmark_backend(backend, iterations=1000):
        start_time = time.time()

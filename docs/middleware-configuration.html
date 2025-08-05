@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Middleware Configuration &mdash; Cache Middleware 0.1.1 documentation</title>
+  <title>Middleware Configuration &mdash; Cache Middleware 0.1.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,7 +14,7 @@
     <link rel="canonical" href="/cache-middleware/middleware-configuration.html" />
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/documentation_options.js?v=6e0256f3"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -51,7 +51,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Middleware Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#backend-configuration">Backend Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cache-backend-interface">Cache Backend Interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#redis-backend-options">Redis Backend Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#redis-valkey-backend-options">Redis/ValKey Backend Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#memory-backend-options">Memory Backend Options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#custom-backend-configuration">Custom Backend Configuration</a></li>
 </ul>
@@ -156,13 +156,13 @@
 </pre></div>
 </div>
 </section>
-<section id="redis-backend-options">
-<h3>Redis Backend Options<a class="headerlink" href="#redis-backend-options" title="Link to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">RedisBackend</span></code> supports extensive configuration:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.redis_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
+<section id="redis-valkey-backend-options">
+<h3>Redis/ValKey Backend Options<a class="headerlink" href="#redis-valkey-backend-options" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">RedisBackend</span></code> supports extensive configuration and works with both Redis and ValKey:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
 
 <span class="n">redis_backend</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span>
-    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>           <span class="c1"># Redis connection URL</span>
+    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>           <span class="c1"># Redis/ValKey connection URL (use 6380 for ValKey)</span>
     <span class="n">max_connections</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>                     <span class="c1"># Max connections in pool</span>
     <span class="n">retry_on_timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                  <span class="c1"># Retry on timeout</span>
     <span class="n">socket_keepalive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                  <span class="c1"># Enable TCP keepalive</span>
@@ -172,8 +172,8 @@
         <span class="mi">3</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1"># TCP_KEEPCNT</span>
     <span class="p">},</span>
     <span class="n">health_check_interval</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>               <span class="c1"># Health check interval (seconds)</span>
-    <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>                          <span class="c1"># Redis password</span>
-    <span class="n">db</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                                   <span class="c1"># Redis database number</span>
+    <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>                          <span class="c1"># Redis/ValKey password</span>
+    <span class="n">db</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                                   <span class="c1"># Database number</span>
     <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>                       <span class="c1"># String encoding</span>
     <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                  <span class="c1"># Auto-decode responses</span>
     <span class="n">socket_timeout</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>                     <span class="c1"># Socket timeout</span>
@@ -193,23 +193,26 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic Redis</span>
 <span class="s2">&quot;redis://localhost:6379&quot;</span>
 
-<span class="c1"># Redis with password</span>
+<span class="c1"># Basic ValKey</span>
+<span class="s2">&quot;redis://localhost:6380&quot;</span>
+
+<span class="c1"># Redis/ValKey with password</span>
 <span class="s2">&quot;redis://:password@localhost:6379&quot;</span>
 
-<span class="c1"># Redis with username and password</span>
+<span class="c1"># Redis/ValKey with username and password</span>
 <span class="s2">&quot;redis://username:password@localhost:6379&quot;</span>
 
-<span class="c1"># Redis with specific database</span>
+<span class="c1"># Redis/ValKey with specific database</span>
 <span class="s2">&quot;redis://localhost:6379/1&quot;</span>
 
-<span class="c1"># Redis with SSL</span>
+<span class="c1"># Redis/ValKey with SSL</span>
 <span class="s2">&quot;rediss://localhost:6380&quot;</span>
 
-<span class="c1"># Redis Sentinel</span>
+<span class="c1"># Redis Sentinel (works with ValKey too)</span>
 <span class="s2">&quot;redis+sentinel://sentinel-host:26379/mymaster&quot;</span>
 </pre></div>
 </div>
-<p><strong>Production Redis Configuration:</strong></p>
+<p><strong>Production Redis/ValKey Configuration:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">redis_backend</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span>
     <span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://prod-redis-01:6379&quot;</span><span class="p">,</span>
     <span class="n">max_connections</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
@@ -229,7 +232,7 @@
 <section id="memory-backend-options">
 <h3>Memory Backend Options<a class="headerlink" href="#memory-backend-options" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">MemoryBackend</span></code> has simpler configuration:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.memory_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBackend</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBackend</span>
 
 <span class="n">memory_backend</span> <span class="o">=</span> <span class="n">MemoryBackend</span><span class="p">(</span>
     <span class="n">max_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>          <span class="c1"># Maximum number of cached items</span>
@@ -249,7 +252,7 @@
 <section id="custom-backend-configuration">
 <h3>Custom Backend Configuration<a class="headerlink" href="#custom-backend-configuration" title="Link to this heading"></a></h3>
 <p>For implementing custom backends:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheBackend</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheBackend</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CustomBackend</span><span class="p">(</span><span class="n">CacheBackend</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">):</span>
@@ -283,7 +286,7 @@
 <section id="cache-decorator-options">
 <h3>Cache Decorator Options<a class="headerlink" href="#cache-decorator-options" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">&#64;cache</span></code> decorator accepts several parameters:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
 
 <span class="nd">@cache</span><span class="p">(</span>
     <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>            <span class="c1"># Cache timeout in seconds</span>
@@ -344,8 +347,7 @@
 <h3>Basic Registration<a class="headerlink" href="#basic-registration" title="Link to this heading"></a></h3>
 <p>Register the middleware with your FastAPI application:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheMiddleware</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.redis_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheMiddleware</span><span class="p">,</span> <span class="n">RedisBackend</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cache Middleware Documentation &mdash; Cache Middleware 0.1.1 documentation</title>
+  <title>Cache Middleware Documentation &mdash; Cache Middleware 0.1.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,7 +14,7 @@
     <link rel="canonical" href="/cache-middleware/index.html" />
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a58bc63e"></script>
+      <script src="_static/documentation_options.js?v=6e0256f3"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -161,7 +161,7 @@
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><strong>Multiple Backends</strong>: Redis, in-memory, and custom backend support</p></li>
+<li><p><strong>Multiple Backends</strong>: Redis/ValKey, in-memory, and custom backend support</p></li>
 <li><p><strong>Decorator-based</strong>: Simple <code class="docutils literal notranslate"><span class="pre">&#64;cache(timeout=300)</span></code> decorator for endpoint caching</p></li>
 <li><p><strong>Cache-Control Support</strong>: Respects HTTP Cache-Control headers</p></li>
 <li><p><strong>Flexible Configuration</strong>: Environment-based or explicit configuration</p></li>
@@ -177,14 +177,12 @@
 </div>
 <p>Add caching to your FastAPI application:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheMiddleware</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.backends.redis_backend</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisBackend</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cache_middleware</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheMiddleware</span><span class="p">,</span> <span class="n">RedisBackend</span><span class="p">,</span> <span class="n">cache</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 
-<span class="c1"># Configure Redis backend</span>
-<span class="n">redis_backend</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">)</span>
+<span class="c1"># Configure Redis/ValKey backend</span>
+<span class="n">redis_backend</span> <span class="o">=</span> <span class="n">RedisBackend</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">)</span>  <span class="c1"># Use 6380 for ValKey</span>
 <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">CacheMiddleware</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">redis_backend</span><span class="p">)</span>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/items&quot;</span><span class="p">)</span>
