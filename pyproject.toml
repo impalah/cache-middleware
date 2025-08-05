@@ -6,6 +6,9 @@ authors = [
     {name = "Linus", email = "impalah@gmail.com"}
 ]
 readme = "README.md"
+homepage = "https://impalah.github.io/cache-middleware/"
+repository = "https://github.com/impalah/cache-middleware"
+documentation = "https://impalah.github.io/cache-middleware/"
 license = { text = "MIT" }
 keywords = ["cache", "middleware", "starlette", "fastapi"]
 classifiers = [
