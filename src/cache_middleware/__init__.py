@@ -5,7 +5,7 @@ This package provides transparent response caching with pluggable backends.
 """
 
 # Version info
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 
 # Core middleware and decorator
 from .middleware import CacheMiddleware
