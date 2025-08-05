@@ -112,7 +112,7 @@ wheels = [
 
 [[package]]
 name = "cache-middleware"
-version = "0.1.2"
+version = "0.1.5"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },

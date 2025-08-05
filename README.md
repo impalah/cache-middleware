@@ -54,9 +54,7 @@ pip install cache-middleware[all]
 
 ```python
 from fastapi import FastAPI
-from cache_middleware.middleware import CacheMiddleware
-from cache_middleware.backends.memory_backend import MemoryBackend
-from cache_middleware.decorators import cache
+from cache_middleware import CacheMiddleware, MemoryBackend, cache
 
 app = FastAPI()
 
@@ -70,14 +68,18 @@ async def get_items():
     return {"items": [1, 2, 3, 4, 5]}
 ```
 
-### Redis Backend Example
+### Redis/ValKey Backend Example
 
 ```python
-from cache_middleware.backends.redis_backend import RedisBackend
+from cache_middleware import RedisBackend
 
 # Configure Redis backend
 redis_backend = RedisBackend(url="redis://localhost:6379")
 app.add_middleware(CacheMiddleware, backend=redis_backend)
+
+# Or configure ValKey backend (same API)
+valkey_backend = RedisBackend(url="redis://localhost:6380")
+app.add_middleware(CacheMiddleware, backend=valkey_backend)
 ```
 
 ## 🔧 Backend Options
@@ -89,12 +91,13 @@ app.add_middleware(CacheMiddleware, backend=redis_backend)
 - ✅ LRU eviction policy
 - ✅ Configurable size limits
 
-### Redis Backend
+### Redis/ValKey Backend
 
 - ✅ Production-ready distributed caching
 - ✅ Persistence and high availability
 - ✅ Clustering support
 - ✅ High performance with hiredis
+- ✅ **Redis & ValKey Compatible**: Works with both Redis and ValKey servers
 
 ### Memcached Backend
 
@@ -112,7 +115,7 @@ app.add_middleware(CacheMiddleware, backend=redis_backend)
 
 - **Python**: 3.12 or higher
 - **FastAPI**: 0.116.1 or higher
-- **Redis**: Optional, required only for Redis backend
+- **Redis/ValKey**: Optional, required only for Redis/ValKey backend
 - **Memcached**: Optional, required only for Memcached backend
 
 ## 🔗 Links
@@ -129,6 +132,40 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🤝 Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](https://impalah.github.io/cache-middleware/) for details on our code of conduct and the process for submitting pull requests.
+
+## 🛠️ Development
+
+### Version Management
+
+This project uses automatic version synchronization across all files. When you bump the version:
+
+```bash
+# Development commands
+make bump-version           # Bumps patch version (0.1.5 → 0.1.6)
+make bump-version PART=minor # Bumps minor version (0.1.5 → 0.2.0)
+make bump-version PART=major # Bumps major version (0.1.5 → 1.0.0)
+
+# Sync only (without bumping)
+make sync-version           # Synchronizes current version across all files
+```
+
+The version is automatically updated in:
+
+- `pyproject.toml` (source of truth)
+- `src/cache_middleware/__init__.py` (`__version__`)
+- `docs_source/conf.py` (Sphinx documentation)
+
+### Build and Test
+
+```bash
+make build     # Build package (includes version bump)
+make test      # Run tests
+make lint      # Code linting
+make format    # Code formatting
+make docs      # Build documentation
+```
+
+For more details, see [`scripts/README.md`](scripts/README.md).
 
 ## 🚀 Getting Started
 

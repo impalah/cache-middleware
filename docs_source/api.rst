@@ -19,13 +19,16 @@ Core Components
 Backend Implementations
 -----------------------
 
-Redis Backend
-~~~~~~~~~~~~~
+Redis/ValKey Backend
+~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: cache_middleware.backends.redis_backend
    :members:
    :undoc-members:
    :show-inheritance:
+
+The Redis backend is fully compatible with both Redis and ValKey databases. 
+ValKey is a high-performance data structure server that provides 100% compatibility with Redis APIs.
 
 Memory Backend
 ~~~~~~~~~~~~~~
@@ -86,7 +89,7 @@ Backend Classes
 
    CacheBackend (ABC)
    ├── MemoryBackend
-   ├── RedisBackend
+   ├── RedisBackend (compatible with Redis and ValKey)
    └── Custom backends (user-defined)
 
 Middleware Classes
@@ -120,14 +123,11 @@ Creating and configuring backends:
 
 .. code-block:: python
 
-   from cache_middleware.backends.redis_backend import RedisBackend
-   from cache_middleware.backends.memory_backend import MemoryBackend
-   from cache_middleware.middleware import CacheMiddleware
-   from cache_middleware.decorators import cache
+   from cache_middleware import RedisBackend, MemoryBackend, CacheMiddleware, cache
 
-   # Create Redis backend
+   # Create Redis/ValKey backend
    redis_backend = RedisBackend(
-       url="redis://localhost:6379",
+       url="redis://localhost:6379",  # Or use port 6380 for ValKey
        max_connections=10
    )
 

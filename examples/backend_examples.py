@@ -4,33 +4,33 @@ Example of how to configure different cache backends with dependency injection
 """
 
 from fastapi import Body, FastAPI
-from cache_middleware.middleware import CacheMiddleware
-from cache_middleware.decorators import cache
+from cache_middleware import CacheMiddleware, cache
 
 # Optional imports with error handling
 try:
-    from cache_middleware.backends.redis_backend import RedisBackend
+    from cache_middleware import RedisBackend
     _REDIS_AVAILABLE = True
 except ImportError:
     _REDIS_AVAILABLE = False
     print("Warning: Redis backend not available. Install with: pip install cache-middleware[redis]")
 
-from cache_middleware.backends.memory_backend import MemoryBackend
+from cache_middleware import MemoryBackend
 
 
 def create_app_with_redis():
-    """Application with Redis backend"""
+    """Application with Redis/ValKey backend"""
     if not _REDIS_AVAILABLE:
         raise ImportError(
-            "Redis backend requires 'redis[hiredis]'. "
+            "Redis/ValKey backend requires 'redis[hiredis]'. "
             "Install with: pip install cache-middleware[redis]"
         )
     
-    app = FastAPI(title="Cache App - Redis")
+    app = FastAPI(title="Cache App - Redis/ValKey")
     
-    # Create and configure Redis backend
+    # Create and configure Redis/ValKey backend
+    # Works with both Redis (port 6379) and ValKey (port 6380)
     redis_backend = RedisBackend(
-        url="redis://localhost:6379",
+        url="redis://localhost:6379",  # Change to 6380 for ValKey
         max_connections=20
     )
     
@@ -103,7 +103,7 @@ def create_app_with_hybrid_backend():
             "Install with: pip install cache-middleware[redis]"
         )
     
-    from cache_middleware.backends import CacheBackend
+    from cache_middleware import CacheBackend
     from typing import Optional
     
     class HybridBackend(CacheBackend):

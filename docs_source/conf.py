@@ -13,8 +13,8 @@ sys.path.insert(0, os.path.abspath('../src'))
 project = 'Cache Middleware'
 copyright = '2025, impalah'
 author = 'impalah'
-release = '0.1.1'
-version = '0.1.1'
+# Version information - managed automatically by bump2version
+release = version = '0.1.5'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

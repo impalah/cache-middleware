@@ -21,7 +21,12 @@ bump-version:
 	@v=$$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.version) && \
 	echo "🔧 Current version: $$v" && \
 	uvx --from bump2version bumpversion --allow-dirty --current-version "$$v" $(PART) pyproject.toml && \
-	echo "✅ Version bumped to new $(PART)"
+	uv run python scripts/update_version.py && \
+	echo "✅ Version bumped to new $(PART) and synchronized across all files"
+
+# Sync version across all project files (without bumping)
+sync-version:
+	uv run python scripts/update_version.py
 
 # Build python package
 build: bump-version
